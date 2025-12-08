@@ -14,6 +14,7 @@ import Inventory2Icon from "@mui/icons-material/Inventory2";
 import CategoryIcon from "@mui/icons-material/Category";
 import HistoryIcon from "@mui/icons-material/History";
 import PersonIcon from "@mui/icons-material/Person";
+import Image from "next/image";
 
 const navItems = [
   { label: "Bundles", href: "/bundles", icon: <CategoryIcon /> },
@@ -21,7 +22,6 @@ const navItems = [
   { label: "Activity", href: "/activity", icon: <HistoryIcon /> },
   { label: "Profile", href: "/profile", icon: <PersonIcon /> },
 ];
-
 export default function Sidebar() {
   return (
     <Box
@@ -33,18 +33,14 @@ export default function Sidebar() {
         p: 2,
       }}
     >
-      <Box display="flex" alignItems="center" mb={4} gap={1}>
-        <Box
-          sx={{
-            width: 36,
-            height: 36,
-            borderRadius: "50%",
-            bgcolor: "#E5EEFF",
-          }}
+      <Box display="flex" alignItems="center" mb={4} ml={4} gap={1}>
+        <Image
+          src="/logo.png"
+          alt="StuffBi Logo"
+          width={100}
+          height={100}
+          style={{ borderRadius: "50%" }}
         />
-        <Typography variant="h6" fontWeight={700}>
-          StuffBi
-        </Typography>
       </Box>
 
       <List>
