@@ -3,7 +3,6 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
 
 import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
 import Bundles from "./pages/Bundles";
 import Items from "./pages/Items";
 import Profile from "./pages/Profile";
@@ -32,14 +31,7 @@ export default function App() {
       <Route path="/" element={<Login />} />
 
       {/* Protected Routes */}
-      <Route
-        path="/dashboard"
-        element={
-          <PrivateRoute>
-            <Dashboard />
-          </PrivateRoute>
-        }
-      />
+
 
       <Route
         path="/bundles"

@@ -19,7 +19,7 @@ export default function Login() {
   const handleSubmit = async () => {
     try {
       await login(email, password);
-      navigate("/dashboard");
+      navigate("/bundles");
     } catch (err) {
       alert("Login failed");
     }
