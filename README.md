@@ -1,36 +1,124 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# StuffBi Web App – Frontend
 
-## Getting Started
+A web dashboard for the StuffBi app, built with **Next.js** and **MUI**, sharing the same JWT-based auth backend used by the Flutter mobile app.
 
-First, run the development server:
+- Live URL: https://stuffbi-webapp-frontend.vercel.app
+- Backend API (prod): https://apiofstuffbi.sanjulagathsara.com
+
+---
+
+## Tech Stack
+
+- [Next.js 16 (App Router)](https://nextjs.org/)
+- React + TypeScript
+- [MUI (Material UI)](https://mui.com/)
+- JWT-based authentication (talking to the Express backend)
+- Deployed on [Vercel](https://vercel.com)
+
+---
+
+## Project Structure (high level)
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+app/
+  login/
+    page.tsx        # Login page
+  bundles/
+    page.tsx        # Bundles view
+  items/
+    page.tsx        # Items view
+  layout.tsx        # Root layout
+  page.tsx          # Default dashboard / redirect
+components/
+  ui/               # Reusable UI components (MUI-based)
+lib/
+  api.ts            # API client using NEXT_PUBLIC_API_URL
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Environment Variables
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The frontend expects a running backend API. Configure:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# .env.local
 
-## Learn More
+NEXT_PUBLIC_API_URL=https://apiofstuffbi.sanjulagathsara.com
 
-To learn more about Next.js, take a look at the following resources:
+For local development, you can point to a local backend:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+NEXT_PUBLIC_API_URL=http://localhost:4000
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+This value is used in all API calls, e.g. POST /auth/login, GET /items, etc.
 
-## Deploy on Vercel
+Getting Started (Local Development)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Install dependencies
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+npm install
+
+# or
+
+pnpm install
+
+Create .env.local
+
+cp .env.example .env.local # if .env.example exists
+
+# Or manually create .env.local with NEXT_PUBLIC_API_URL
+
+Run dev server
+
+npm run dev
+
+The app will be available at:
+
+http://localhost:3000
+
+Login
+
+Use the seeded user from the backend:
+
+email: test@example.com
+password: password123
+
+Build & Production
+
+To build locally:
+
+npm run build
+npm run start
+
+Vercel uses:
+
+Build command: npm run build
+
+Output: .next
+
+Env: NEXT_PUBLIC_API_URL set in Vercel → Project Settings → Environment Variables
+
+API Integration
+
+All calls are made relative to NEXT_PUBLIC_API_URL.
+
+Example login call:
+
+const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+method: "POST",
+headers: { "Content-Type": "application/json" },
+body: JSON.stringify({ email, password }),
+});
+
+Example items fetch:
+
+const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/items`, {
+headers: {
+Authorization: `Bearer ${accessToken}`,
+},
+});
+
+Deployment
+
+The project is deployed on Vercel:
+
+Push to main → Vercel builds & deploys automatically.
+
+Remember to update NEXT_PUBLIC_API_URL in Vercel when backend URL changes.
