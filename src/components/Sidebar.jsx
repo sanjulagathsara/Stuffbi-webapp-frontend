@@ -29,7 +29,7 @@ export default function Sidebar() {
   return (
     <Box
       sx={{
-        width: 240,
+        width: 200,
         bgcolor: "white",
         borderRight: "1px solid #E2E8F0",
         p: 2,
@@ -38,10 +38,7 @@ export default function Sidebar() {
     >
       {/* Logo Section */}
       <Box display="flex" alignItems="center" gap={1} p={2}>
-        <img src="/logo.png" alt="logo" style={{ width: 38 }} />
-        <Typography fontWeight={700} fontSize={18} color="#2563EB">
-          Stuffbi
-        </Typography>
+        <img src="/logo.png" alt="logo" style={{ width: 150}} />
       </Box>
 
       {/* Navigation */}
