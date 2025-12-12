@@ -9,19 +9,24 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-export default function Login() {
-  const { login } = useAuth();
+export default function Signup() {
+  const { signup } = useAuth();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleSubmit = async () => {
+    if (password !== confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
     try {
-      await login(email, password);
+      await signup(email, password);
       navigate("/bundles");
     } catch (err) {
-      alert("Login failed. Error: " + err.message);
+      alert("Signup failed. Error: " + err.message);
     }
   };
 
@@ -42,7 +47,6 @@ export default function Login() {
           boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
         }}
       >
-        {/* ✅ Centered Logo */}
         <img
           src="/logo.png"
           alt="StuffBi Logo"
@@ -54,7 +58,7 @@ export default function Login() {
         />
 
         <Typography variant="h5" fontWeight={600} mb={3}>
-          Welcome!
+          Register to StuffBi
         </Typography>
 
         <TextField
@@ -69,18 +73,22 @@ export default function Login() {
           label="Password"
           fullWidth
           type="password"
-          sx={{ mb: 3 }}
+          sx={{ mb: 2 }}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
 
+        <TextField
+          label="Confirm Password"
+          fullWidth
+          type="password"
+          sx={{ mb: 3 }}
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+        />
         <Button fullWidth variant="contained" onClick={handleSubmit}>
-          Login
+          Register 
         </Button>
-          <div style={{ marginTop: 16 }}></div>
-              <Typography variant="caption" >
-        Don't have an account? <a href="/signup">Create one</a>
-      </Typography>
       </Card>
     </Box>
   );
