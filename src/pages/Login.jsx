@@ -21,7 +21,7 @@ export default function Login() {
       await login(email, password);
       navigate("/bundles");
     } catch (err) {
-      alert("Login failed");
+      alert("Login failed. Error: " + err.message);
     }
   };
 
