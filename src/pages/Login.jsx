@@ -21,7 +21,7 @@ export default function Login() {
       await login(email, password);
       navigate("/bundles");
     } catch (err) {
-      alert("Login failed");
+      alert("Login failed. Error: " + err.message);
     }
   };
 
@@ -42,7 +42,6 @@ export default function Login() {
           boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
         }}
       >
-        {/* ✅ Centered Logo */}
         <img
           src="/logo.png"
           alt="StuffBi Logo"
