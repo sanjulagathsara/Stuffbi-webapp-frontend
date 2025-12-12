@@ -7,6 +7,7 @@ import Bundles from "./pages/Bundles";
 import Items from "./pages/Items";
 import Profile from "./pages/Profile";
 import Activity from "./pages/Activity";
+import Signup from "./pages/Signup.jsx";
 
 // ---------------------------
 // Protected Route Wrapper
@@ -29,6 +30,7 @@ export default function App() {
     <Routes>
       {/* Public */}
       <Route path="/" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
 
       {/* Protected Routes */}
 
