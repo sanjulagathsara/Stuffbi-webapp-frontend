@@ -16,6 +16,9 @@ export default function Bundles() {
   const [editBundle, setEditBundle] = useState(null);
 
 
+
+
+
   useEffect(() => {
     api.get("/bundles").then((res) => setBundles(res.data));
   }, []);
@@ -31,6 +34,19 @@ export default function Bundles() {
         setOpenAdd(false);
       })
       .catch(() => alert("Bundle create failed"));
+  };
+
+  // --------------------------
+  // DELETE BUNDLE
+  // --------------------------
+  const deleteBundle = (bundleId) => {
+    api
+      .delete(`/bundles/${bundleId}`)
+      .then(() => {
+        setBundles((prev) => prev.filter((b) => b.id !== bundleId));
+        setOpenAdd(false);
+      })
+      .catch(() => alert("Failed to delete bundle"));
   };
 
   // --------------------------
@@ -89,13 +105,13 @@ export default function Bundles() {
                   image_url: b.image_url,
                 }}
                 onEdit={() => openEditModal(b)}
+                onDelete={() => deleteBundle(b.id)}
               />
             ))}
           </Box>
         </Box>
       </Box>
 
-      {/* ---------------------- ADD / EDIT MODALS ---------------------- */}
       <BundleModal
         open={openAdd}
         mode="add"
@@ -110,6 +126,7 @@ export default function Bundles() {
         initialBundle={editBundle}
         onClose={() => setEditOpen(false)}
         onSubmit={saveEdit}
+        onDelete={deleteBundle}
       />
     </Box>
   );
