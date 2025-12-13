@@ -14,6 +14,7 @@ export default function BundleModal({
     const [title, setTitle] = useState("");
     const [subtitle, setSubtitle] = useState("");
     const [imageUrl, setImageUrl] = useState("");
+    const [openDeleteConfirm, setOpenDeleteConfirm] = useState(false);
 
     useEffect(() => {
         if (open) {
@@ -44,8 +45,13 @@ export default function BundleModal({
     };
 
     const handleDelete = () => {
+        setOpenDeleteConfirm(true);
+    };
+
+    const confirmDelete = () => {
         if (onDelete && initialBundle?.id) {
             onDelete(initialBundle.id);
+            setOpenDeleteConfirm(false);
             onClose();
         }
     };
@@ -54,28 +60,43 @@ export default function BundleModal({
     const actionText = mode === "edit" ? "Save" : "Add";
 
     return (
-        <Dialog open={open} onClose={onClose}>
-            <DialogTitle>{titleText}</DialogTitle>
-            <DialogContent>
-                <BundleForm
-                    title={title}
-                    subtitle={subtitle}
-                    imageUrl={imageUrl}
-                    onChange={handleFormChange}
-                />
-            </DialogContent>
-            <DialogActions>
-                {mode === "edit" && onDelete && (
-                    <IconButton onClick={handleDelete} color="error" size="small" title="Delete bundle">
-                        <DeleteIcon />
-                    </IconButton>
-                )}
-                <div style={{ flex: 1 }} />
-                <Button onClick={onClose}>Cancel</Button>
-                <Button variant="contained" onClick={handleSubmit}>
-                    {actionText}
-                </Button>
-            </DialogActions>
-        </Dialog>
+        <>
+            <Dialog open={open} onClose={onClose}>
+                <DialogTitle>{titleText}</DialogTitle>
+                <DialogContent>
+                    <BundleForm
+                        title={title}
+                        subtitle={subtitle}
+                        imageUrl={imageUrl}
+                        onChange={handleFormChange}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    {mode === "edit" && onDelete && (
+                        <IconButton onClick={handleDelete} color="error" size="small" title="Delete bundle">
+                            <DeleteIcon />
+                        </IconButton>
+                    )}
+                    <div style={{ flex: 1 }} />
+                    <Button onClick={onClose}>Cancel</Button>
+                    <Button variant="contained" onClick={handleSubmit}>
+                        {actionText}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            <Dialog open={openDeleteConfirm} onClose={() => setOpenDeleteConfirm(false)}>
+                <DialogTitle>Delete Bundle</DialogTitle>
+                <DialogContent>
+                    Are you sure you want to delete this bundle? This action cannot be undone.
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setOpenDeleteConfirm(false)}>Cancel</Button>
+                    <Button variant="contained" color="error" onClick={confirmDelete}>
+                        Delete
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </>
     );
 }
