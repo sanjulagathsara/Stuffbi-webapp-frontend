@@ -2,25 +2,32 @@ import { useEffect, useState } from "react";
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ItemForm from "./ItemForm";
+import api from "../api/api";
 
 export default function ItemModal({
     open,
     mode = "add", // 'add' | 'edit'
     initialItem, // optional for edit
     onClose,
-    onSubmit, // ({ name, subtitle, imageUrl }) => void
+    onSubmit, // ({ name, subtitle, imageUrl, bundleId }) => void
     onDelete, // optional for delete
 }) {
     const [name, setName] = useState("");
     const [subtitle, setSubtitle] = useState("");
     const [imageUrl, setImageUrl] = useState("");
+    const [bundleId, setBundleId] = useState(null);
+    const [bundles, setBundles] = useState([]);
     const [openDeleteConfirm, setOpenDeleteConfirm] = useState(false);
 
     useEffect(() => {
+        // Load bundles when modal opens
         if (open) {
             setName(initialItem?.name || "");
             setSubtitle(initialItem?.subtitle || "");
             setImageUrl(initialItem?.image_url || "");
+            setBundleId(initialItem?.bundle_id || null);
+            
+            api.get("/bundles").then((res) => setBundles(res.data)).catch(() => {});
         }
     }, [open, initialItem]);
 
@@ -35,13 +42,16 @@ export default function ItemModal({
             case "imageUrl":
                 setImageUrl(value);
                 break;
+            case "bundleId":
+                setBundleId(value);
+                break;
             default:
                 break;
         }
     };
 
     const handleSubmit = () => {
-        onSubmit?.({ name, subtitle, imageUrl });
+        onSubmit?.({ name, subtitle, imageUrl, bundleId });
     };
 
     const handleDelete = () => {
@@ -68,6 +78,8 @@ export default function ItemModal({
                         name={name}
                         subtitle={subtitle}
                         imageUrl={imageUrl}
+                        bundleId={bundleId}
+                        bundles={bundles}
                         onChange={handleFormChange}
                     />
                 </DialogContent>

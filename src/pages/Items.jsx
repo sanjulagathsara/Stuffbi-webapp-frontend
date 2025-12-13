@@ -27,12 +27,13 @@ export default function Items() {
   }, []);
 
   // ADD ITEM
-  const addItem = ({ name, subtitle, imageUrl }) => {
+  const addItem = ({ name, subtitle, imageUrl, bundleId }) => {
     api
       .post("/items", {
         name,
         subtitle,
         image_url: imageUrl,
+        bundle_id: bundleId,
       })
       .then((res) => {
         setItems((prev) => [...prev, res.data]);
@@ -58,12 +59,13 @@ export default function Items() {
   };
 
   // UPDATE ITEM
-  const updateItem = ({ name, subtitle, imageUrl }) => {
+  const updateItem = ({ name, subtitle, imageUrl, bundleId }) => {
     api
       .put(`/items/${editItem.id}`, {
         name,
         subtitle,
         image_url: imageUrl,
+        bundle_id: bundleId,
       })
       .then((res) => {
         setItems((prev) =>
