@@ -45,6 +45,10 @@ export default function BundleModal({
     };
 
     const handleDelete = () => {
+        // Remove focus from the delete button before opening confirmation
+        if (document.activeElement instanceof HTMLElement) {
+            document.activeElement.blur();
+        }
         setOpenDeleteConfirm(true);
     };
 
