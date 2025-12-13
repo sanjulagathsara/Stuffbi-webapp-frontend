@@ -1,4 +1,4 @@
-import { Card, CardContent, Typography, Box } from "@mui/material";
+import { Card, CardContent, Typography, Box, Chip } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 
 export default function ItemCard({ item, onEdit }) {
@@ -65,6 +65,18 @@ export default function ItemCard({ item, onEdit }) {
           <Typography variant="body2" color="text.secondary">
             {item.subtitle}
           </Typography>
+        )}
+
+        {item.bundle_title && (
+          <Box mt={1}>
+            <Chip 
+              label={item.bundle_title} 
+              size="small" 
+              color="primary" 
+              variant="outlined"
+              sx={{ fontSize: "0.75rem" }}
+            />
+          </Box>
         )}
       </CardContent>
     </Card>

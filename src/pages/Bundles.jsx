@@ -1,31 +1,23 @@
 import { useEffect, useState } from "react";
-import {
-  Box,
-  Typography,
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  TextField,
-  DialogActions,
-} from "@mui/material";
+import { Box, Typography, Button } from "@mui/material";
 
 import api from "../api/api";
 import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
 import ItemCard from "../components/ItemCard";
+import BundleModal from "../components/BundleModal";
 
 export default function Bundles() {
   const [bundles, setBundles] = useState([]);
-  const [open, setOpen] = useState(false);
+  const [openAdd, setOpenAdd] = useState(false);
 
   // EDIT modal state
   const [editOpen, setEditOpen] = useState(false);
   const [editBundle, setEditBundle] = useState(null);
 
-  const [title, setTitle] = useState("");
-  const [subtitle, setSubtitle] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
+
+
+
 
   useEffect(() => {
     api.get("/bundles").then((res) => setBundles(res.data));
@@ -34,17 +26,27 @@ export default function Bundles() {
   // --------------------------
   // ADD BUNDLE
   // --------------------------
-  const addBundle = () => {
+  const addBundle = ({ title, subtitle, imageUrl }) => {
     api
       .post("/bundles", { title, subtitle, image_url: imageUrl })
       .then((res) => {
         setBundles((prev) => [...prev, res.data]);
-        setOpen(false);
-        setTitle("");
-        setSubtitle("");
-        setImageUrl("");
+        setOpenAdd(false);
       })
       .catch(() => alert("Bundle create failed"));
+  };
+
+  // --------------------------
+  // DELETE BUNDLE
+  // --------------------------
+  const deleteBundle = (bundleId) => {
+    api
+      .delete(`/bundles/${bundleId}`)
+      .then(() => {
+        setBundles((prev) => prev.filter((b) => b.id !== bundleId));
+        setOpenAdd(false);
+      })
+      .catch(() => alert("Failed to delete bundle"));
   };
 
   // --------------------------
@@ -52,16 +54,13 @@ export default function Bundles() {
   // --------------------------
   const openEditModal = (bundle) => {
     setEditBundle(bundle);
-    setTitle(bundle.title);
-    setSubtitle(bundle.subtitle);
-    setImageUrl(bundle.image_url || "");
     setEditOpen(true);
   };
 
   // --------------------------
   // SAVE EDIT
   // --------------------------
-  const saveEdit = () => {
+  const saveEdit = ({ title, subtitle, imageUrl }) => {
     api
       .put(`/bundles/${editBundle.id}`, {
         title,
@@ -72,11 +71,7 @@ export default function Bundles() {
         setBundles((prev) =>
           prev.map((b) => (b.id === res.data.id ? res.data : b))
         );
-
         setEditOpen(false);
-        setTitle("");
-        setSubtitle("");
-        setImageUrl("");
       })
       .catch(() => alert("Failed to update bundle"));
   };
@@ -94,7 +89,7 @@ export default function Bundles() {
               Bundles
             </Typography>
 
-            <Button variant="contained" onClick={() => setOpen(true)}>
+            <Button variant="contained" onClick={() => setOpenAdd(true)}>
               + Add Bundle
             </Button>
           </Box>
@@ -110,83 +105,29 @@ export default function Bundles() {
                   image_url: b.image_url,
                 }}
                 onEdit={() => openEditModal(b)}
+                onDelete={() => deleteBundle(b.id)}
               />
             ))}
           </Box>
         </Box>
       </Box>
 
-      {/* ---------------------- ADD MODAL ---------------------- */}
-      <Dialog open={open} onClose={() => setOpen(false)}>
-        <DialogTitle>Add Bundle</DialogTitle>
-        <DialogContent sx={{ width: 350 }}>
-          <TextField
-            fullWidth
-            label="Title"
-            sx={{ mb: 2 }}
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-
-          <TextField
-            fullWidth
-            label="Subtitle"
-            sx={{ mb: 2 }}
-            value={subtitle}
-            onChange={(e) => setSubtitle(e.target.value)}
-          />
-
-          <TextField
-            fullWidth
-            label="Image URL"
-            value={imageUrl}
-            onChange={(e) => setImageUrl(e.target.value)}
-          />
-        </DialogContent>
-
-        <DialogActions>
-          <Button onClick={() => setOpen(false)}>Cancel</Button>
-          <Button variant="contained" onClick={addBundle}>
-            Add
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <BundleModal
+        open={openAdd}
+        mode="add"
+        onClose={() => setOpenAdd(false)}
+        onSubmit={addBundle}
+      />
 
       {/* ---------------------- EDIT MODAL ---------------------- */}
-      <Dialog open={editOpen} onClose={() => setEditOpen(false)}>
-        <DialogTitle>Edit Bundle</DialogTitle>
-        <DialogContent sx={{ width: 350 }}>
-          <TextField
-            fullWidth
-            label="Title"
-            sx={{ mb: 2 }}
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-
-          <TextField
-            fullWidth
-            label="Subtitle"
-            sx={{ mb: 2 }}
-            value={subtitle}
-            onChange={(e) => setSubtitle(e.target.value)}
-          />
-
-          <TextField
-            fullWidth
-            label="Image URL"
-            value={imageUrl}
-            onChange={(e) => setImageUrl(e.target.value)}
-          />
-        </DialogContent>
-
-        <DialogActions>
-          <Button onClick={() => setEditOpen(false)}>Cancel</Button>
-          <Button variant="contained" onClick={saveEdit}>
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <BundleModal
+        open={editOpen}
+        mode="edit"
+        initialBundle={editBundle}
+        onClose={() => setEditOpen(false)}
+        onSubmit={saveEdit}
+        onDelete={deleteBundle}
+      />
     </Box>
   );
 }
