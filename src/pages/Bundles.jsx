@@ -15,9 +15,6 @@ export default function Bundles() {
   const [editOpen, setEditOpen] = useState(false);
   const [editBundle, setEditBundle] = useState(null);
 
-  const [title, setTitle] = useState("");
-  const [subtitle, setSubtitle] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
 
   useEffect(() => {
     api.get("/bundles").then((res) => setBundles(res.data));
