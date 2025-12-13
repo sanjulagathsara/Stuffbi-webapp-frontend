@@ -4,32 +4,22 @@ import {
   Card,
   Typography,
   Button,
-  Dialog,
-  DialogTitle,
-  TextField,
-  DialogContent,
-  DialogActions,
 } from "@mui/material";
 
 import api from "../api/api";
 import PageWrapper from "../components/PageWrapper";
 import ItemCard from "../components/ItemCard";
+import ItemModal from "../components/ItemModal";
 
 export default function Items() {
   const [items, setItems] = useState([]);
 
   // Add Modal
   const [openAdd, setOpenAdd] = useState(false);
-  const [name, setName] = useState("");
-  const [subtitle, setSubtitle] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
 
   // Edit Modal
   const [openEdit, setOpenEdit] = useState(false);
-  const [editId, setEditId] = useState(null);
-  const [editName, setEditName] = useState("");
-  const [editSubtitle, setEditSubtitle] = useState("");
-  const [editImageUrl, setEditImageUrl] = useState("");
+  const [editItem, setEditItem] = useState(null);
 
   // Load items
   useEffect(() => {
@@ -37,7 +27,7 @@ export default function Items() {
   }, []);
 
   // ADD ITEM
-  const addItem = () => {
+  const addItem = ({ name, subtitle, imageUrl }) => {
     api
       .post("/items", {
         name,
@@ -47,33 +37,37 @@ export default function Items() {
       .then((res) => {
         setItems((prev) => [...prev, res.data]);
         setOpenAdd(false);
-        setName("");
-        setSubtitle("");
-        setImageUrl("");
       })
       .catch(() => alert("Item creation failed"));
   };
 
+  // DELETE ITEM
+  const deleteItem = (itemId) => {
+    api
+      .delete(`/items/${itemId}`)
+      .then(() => {
+        setItems((prev) => prev.filter((i) => i.id !== itemId));
+      })
+      .catch(() => alert("Failed to delete item"));
+  };
+
   // OPEN EDIT MODAL
   const openEditModal = (item) => {
-    setEditId(item.id);
-    setEditName(item.name);
-    setEditSubtitle(item.subtitle || "");
-    setEditImageUrl(item.image_url || "");
+    setEditItem(item);
     setOpenEdit(true);
   };
 
   // UPDATE ITEM
-  const updateItem = () => {
+  const updateItem = ({ name, subtitle, imageUrl }) => {
     api
-      .put(`/items/${editId}`, {
-        name: editName,
-        subtitle: editSubtitle,
-        image_url: editImageUrl,
+      .put(`/items/${editItem.id}`, {
+        name,
+        subtitle,
+        image_url: imageUrl,
       })
       .then((res) => {
         setItems((prev) =>
-          prev.map((i) => (i.id === editId ? res.data : i))
+          prev.map((i) => (i.id === editItem.id ? res.data : i))
         );
         setOpenEdit(false);
       })
@@ -111,82 +105,28 @@ export default function Items() {
               key={item.id}
               item={item}
               onEdit={openEditModal}
+              onDelete={() => deleteItem(item.id)}
             />
           ))}
         </Box>
       </Card>
 
-      {/* ---------------- ADD ITEM MODAL ---------------- */}
-      <Dialog open={openAdd} onClose={() => setOpenAdd(false)}>
-        <DialogTitle>Add New Item</DialogTitle>
-        <DialogContent sx={{ width: 350 }}>
-          <TextField
-            fullWidth
-            label="Name"
-            sx={{ mb: 2 }}
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
+      {/* ---------------------- ADD / EDIT MODALS ---------------------- */}
+      <ItemModal
+        open={openAdd}
+        mode="add"
+        onClose={() => setOpenAdd(false)}
+        onSubmit={addItem}
+      />
 
-          <TextField
-            fullWidth
-            label="Subtitle"
-            sx={{ mb: 2 }}
-            value={subtitle}
-            onChange={(e) => setSubtitle(e.target.value)}
-          />
-
-          <TextField
-            fullWidth
-            label="Image URL"
-            value={imageUrl}
-            onChange={(e) => setImageUrl(e.target.value)}
-          />
-        </DialogContent>
-
-        <DialogActions>
-          <Button onClick={() => setOpenAdd(false)}>Cancel</Button>
-          <Button variant="contained" onClick={addItem}>
-            Add
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* ---------------- EDIT ITEM MODAL ---------------- */}
-      <Dialog open={openEdit} onClose={() => setOpenEdit(false)}>
-        <DialogTitle>Edit Item</DialogTitle>
-        <DialogContent sx={{ width: 350 }}>
-          <TextField
-            fullWidth
-            label="Name"
-            sx={{ mb: 2 }}
-            value={editName}
-            onChange={(e) => setEditName(e.target.value)}
-          />
-
-          <TextField
-            fullWidth
-            label="Subtitle"
-            sx={{ mb: 2 }}
-            value={editSubtitle}
-            onChange={(e) => setEditSubtitle(e.target.value)}
-          />
-
-          <TextField
-            fullWidth
-            label="Image URL"
-            value={editImageUrl}
-            onChange={(e) => setEditImageUrl(e.target.value)}
-          />
-        </DialogContent>
-
-        <DialogActions>
-          <Button onClick={() => setOpenEdit(false)}>Cancel</Button>
-          <Button variant="contained" onClick={updateItem}>
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <ItemModal
+        open={openEdit}
+        mode="edit"
+        initialItem={editItem}
+        onClose={() => setOpenEdit(false)}
+        onSubmit={updateItem}
+        onDelete={deleteItem}
+      />
     </PageWrapper>
   );
 }
