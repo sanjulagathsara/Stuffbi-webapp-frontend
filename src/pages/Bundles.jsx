@@ -14,6 +14,7 @@ import api from "../api/api";
 import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
 import ItemCard from "../components/ItemCard";
+import BundleForm from "../components/BundleForm";
 
 export default function Bundles() {
   const [bundles, setBundles] = useState([]);
@@ -26,6 +27,22 @@ export default function Bundles() {
   const [title, setTitle] = useState("");
   const [subtitle, setSubtitle] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+
+  const handleFormChange = ({ field, value }) => {
+    switch (field) {
+      case "title":
+        setTitle(value);
+        break;
+      case "subtitle":
+        setSubtitle(value);
+        break;
+      case "imageUrl":
+        setImageUrl(value);
+        break;
+      default:
+        break;
+    }
+  };
 
   useEffect(() => {
     api.get("/bundles").then((res) => setBundles(res.data));
@@ -119,28 +136,12 @@ export default function Bundles() {
       {/* ---------------------- ADD MODAL ---------------------- */}
       <Dialog open={open} onClose={() => setOpen(false)}>
         <DialogTitle>Add Bundle</DialogTitle>
-        <DialogContent sx={{ width: 350 }}>
-          <TextField
-            fullWidth
-            label="Title"
-            sx={{ mb: 2 }}
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-
-          <TextField
-            fullWidth
-            label="Subtitle"
-            sx={{ mb: 2 }}
-            value={subtitle}
-            onChange={(e) => setSubtitle(e.target.value)}
-          />
-
-          <TextField
-            fullWidth
-            label="Image URL"
-            value={imageUrl}
-            onChange={(e) => setImageUrl(e.target.value)}
+        <DialogContent>
+          <BundleForm
+            title={title}
+            subtitle={subtitle}
+            imageUrl={imageUrl}
+            onChange={handleFormChange}
           />
         </DialogContent>
 
@@ -155,28 +156,12 @@ export default function Bundles() {
       {/* ---------------------- EDIT MODAL ---------------------- */}
       <Dialog open={editOpen} onClose={() => setEditOpen(false)}>
         <DialogTitle>Edit Bundle</DialogTitle>
-        <DialogContent sx={{ width: 350 }}>
-          <TextField
-            fullWidth
-            label="Title"
-            sx={{ mb: 2 }}
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-
-          <TextField
-            fullWidth
-            label="Subtitle"
-            sx={{ mb: 2 }}
-            value={subtitle}
-            onChange={(e) => setSubtitle(e.target.value)}
-          />
-
-          <TextField
-            fullWidth
-            label="Image URL"
-            value={imageUrl}
-            onChange={(e) => setImageUrl(e.target.value)}
+        <DialogContent>
+          <BundleForm
+            title={title}
+            subtitle={subtitle}
+            imageUrl={imageUrl}
+            onChange={handleFormChange}
           />
         </DialogContent>
 
