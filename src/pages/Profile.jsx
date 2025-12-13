@@ -19,8 +19,7 @@ export default function Profile() {
     const [editAvatarUrl, setEditAvatarUrl] = useState("");
 
     useEffect(() => {
-        const endpoint = userId ? `/profile/${userId}` : "/profile/me";
-
+        const endpoint = "/profile/me";
         api
             .get(endpoint)
             .then((res) => {
@@ -55,15 +54,18 @@ export default function Profile() {
             .catch(() => alert("Update failed"));
     };
 
-    if (loading) return <CircularProgress />;
-    if (error) return <Alert severity="error">{error}</Alert>;
-    if (!profile) return <Alert severity="warning">Profile not found</Alert>;
-
     return (
         <PageWrapper>
-            <Box display="flex" minHeight="100vh" bgcolor="#F5F7FF">
+            {loading && (
+                <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+                    <CircularProgress />
+                </Box>
+            )}
+            {error && <Alert severity="error">{error}</Alert>}
+            {!profile && !loading && <Alert severity="warning">Profile not found</Alert>}
 
-                <Box flex={1}>
+            {profile && (
+                <Box>
                     <Box p={4}>
                         <Card sx={{ p: 4, maxWidth: 500, mx: "auto", boxShadow: 3 }}>
                             <Box display="flex" flexDirection="column" alignItems="center" gap={2}>
@@ -95,9 +97,7 @@ export default function Profile() {
                         </Card>
                     </Box>
                 </Box>
-            </Box>
-
-            {/* EDIT PROFILE MODAL */}
+            )}
             <Dialog open={openEdit} onClose={() => setOpenEdit(false)}>
                 <DialogTitle>Edit Profile</DialogTitle>
                 <DialogContent sx={{ width: 350 }}>
