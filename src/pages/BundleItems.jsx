@@ -13,6 +13,8 @@ import api from "../api/api";
 import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
 import ItemCard from "../components/ItemCard";
+import ItemModal from "../components/ItemModal";
+
 
 export default function BundleItems() {
   const { id } = useParams();
@@ -23,6 +25,10 @@ export default function BundleItems() {
   const [bundleTitle, setBundleTitle] = useState(
     location.state?.bundleTitle || `Bundle #${id}`
   );
+
+  // Edit Modal
+  const [openEdit, setOpenEdit] = useState(false);
+  const [editItem, setEditItem] = useState(null);
 
   useEffect(() => {
     // load items in this bundle
@@ -42,6 +48,40 @@ export default function BundleItems() {
         .catch(() => {});
     }
   }, [id]);
+
+ // DELETE ITEM
+  const deleteItem = (itemId) => {
+    api
+      .delete(`/items/${itemId}`)
+      .then(() => {
+        setItems((prev) => prev.filter((i) => i.id !== itemId));
+      })
+      .catch(() => alert("Failed to delete item"));
+  };
+
+  // OPEN EDIT MODAL
+  const openEditModal = (item) => {
+    setEditItem(item);
+    setOpenEdit(true);
+  };
+
+  // UPDATE ITEM
+  const updateItem = ({ name, subtitle, imageUrl, bundleId }) => {
+    api
+      .put(`/items/${editItem.id}`, {
+        name,
+        subtitle,
+        image_url: imageUrl,
+        bundle_id: bundleId,
+      })
+      .then((res) => {
+        setItems((prev) =>
+          prev.map((i) => (i.id === editItem.id ? res.data : i))
+        );
+        setOpenEdit(false);
+      })
+      .catch(() => alert("Update failed"));
+  };
 
   return (
     <Box display="flex" minHeight="100vh" bgcolor="#F5F7FF">
@@ -93,11 +133,26 @@ export default function BundleItems() {
             ) : (
               <Box display="flex" gap={3} flexWrap="wrap">
                 {items.map((item) => (
-                  <ItemCard key={item.id} item={item} />
+                  <ItemCard
+                                key={item.id}
+                                item={item}
+                                onEdit={openEditModal}
+                                onDelete={() => deleteItem(item.id)}
+                              />
                 ))}
               </Box>
             )}
           </Card>
+          {/* ----------------------  EDIT MODALS ---------------------- */}
+          
+                <ItemModal
+                  open={openEdit}
+                  mode="edit"
+                  initialItem={editItem}
+                  onClose={() => setOpenEdit(false)}
+                  onSubmit={updateItem}
+                  onDelete={deleteItem}
+                />
         </Box>
       </Box>
     </Box>
