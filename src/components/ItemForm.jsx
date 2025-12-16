@@ -9,13 +9,22 @@ import {
   Typography,
   LinearProgress,
 } from "@mui/material";
-import { useState } from "react";
-import { presignNewItemImage, presignItemImage, uploadToS3 } from "../api/api";
+import { useEffect, useState } from "react";
+import {
+  presignNewItemImage,
+  presignItemImage,
+  uploadToS3,
+  getItemImageViewUrl,
+} from "../api/api";
+import { getCachedSignedUrl, setCachedSignedUrl } from "../utils/signedUrlCache";
+
+// backend signed ttl = 2 hours → keep frontend cache slightly less
+const VIEW_URL_TTL_MS = 115 * 60 * 1000; // 1h 55m
 
 export default function ItemForm({
   name,
   subtitle,
-  imageUrl,
+  imageUrl,  // raw private S3 url stored in DB
   bundleId,
   bundles = [],
   onChange,
@@ -25,24 +34,79 @@ export default function ItemForm({
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
 
+  //  what we actually show in <img>
+  const [previewSrc, setPreviewSrc] = useState("");
+
+  // local preview when user chooses a new file
+  const [localObjectUrl, setLocalObjectUrl] = useState("");
+
+  // Load preview for existing item image (edit mode) using signed URL
+  useEffect(() => {
+    let alive = true;
+
+    async function loadPreview() {
+      // If user picked a new file, keep showing local preview
+      if (localObjectUrl) return;
+
+      // Add mode: we cannot sign-view without an id
+      if (mode !== "edit" || !itemId || !imageUrl) {
+        if (alive) setPreviewSrc("");
+        return;
+      }
+
+      const cacheKey = `item:preview:${itemId}`;
+      const cached = getCachedSignedUrl(cacheKey);
+      if (cached) {
+        if (alive) setPreviewSrc(cached);
+        return;
+      }
+
+      try {
+        const { viewUrl } = await getItemImageViewUrl(itemId);
+        if (!alive) return;
+
+        setPreviewSrc(viewUrl || "");
+        if (viewUrl) setCachedSignedUrl(cacheKey, viewUrl, VIEW_URL_TTL_MS);
+      } catch {
+        if (alive) setPreviewSrc("");
+      }
+    }
+
+    loadPreview();
+    return () => {
+      alive = false;
+    };
+  }, [mode, itemId, imageUrl, localObjectUrl]);
+
+  // Cleanup object URL
+  useEffect(() => {
+    return () => {
+      if (localObjectUrl) URL.revokeObjectURL(localObjectUrl);
+    };
+  }, [localObjectUrl]);
+
   const handlePickFile = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    // instant preview
+    if (localObjectUrl) URL.revokeObjectURL(localObjectUrl);
+    const objUrl = URL.createObjectURL(file);
+    setLocalObjectUrl(objUrl);
+    setPreviewSrc(objUrl);
 
     try {
       setUploading(true);
       setProgress(0);
 
-      // ✅ choose correct presign endpoint
       const presign =
         mode === "edit" && itemId
           ? await presignItemImage(itemId, file.type)
           : await presignNewItemImage(file.type);
 
-      // ✅ upload with progress
       await uploadToS3(presign.uploadUrl, file, (p) => setProgress(p));
 
-      // save url into form state
+      // save raw URL to DB later via your create/update calls
       onChange({ field: "imageUrl", value: presign.url });
 
       setProgress(100);
@@ -52,8 +116,6 @@ export default function ItemForm({
     } finally {
       setUploading(false);
       e.target.value = ""; // allow selecting same file again
-      // optional: reset bar after upload finishes
-      // setTimeout(() => setProgress(0), 800);
     }
   };
 
@@ -75,7 +137,7 @@ export default function ItemForm({
         onChange={(e) => onChange({ field: "subtitle", value: e.target.value })}
       />
 
-      {/* ✅ Upload button + progress */}
+      {/* Upload button + progress */}
       <Box sx={{ mb: 2 }}>
         <Typography variant="body2" sx={{ mb: 1, color: "text.secondary" }}>
           Item Image
@@ -92,11 +154,28 @@ export default function ItemForm({
           </Box>
         )}
 
-        {imageUrl && (
+        {/* Preview uses previewSrc (signed url or local object url) */}
+        {previewSrc && (
           <Box
             component="img"
-            src={imageUrl}
+            src={previewSrc}
             alt="preview"
+            loading="lazy"
+            decoding="async"
+            onError={async () => {
+              // Signed URL might expire: refresh in edit mode
+              if (mode === "edit" && itemId && !localObjectUrl) {
+                try {
+                  const { viewUrl } = await getItemImageViewUrl(itemId);
+                  setPreviewSrc(viewUrl || "");
+                  if (viewUrl) setCachedSignedUrl(`item:preview:${itemId}`, viewUrl, VIEW_URL_TTL_MS);
+                } catch {
+                  setPreviewSrc("");
+                }
+              } else {
+                setPreviewSrc("");
+              }
+            }}
             sx={{
               mt: 2,
               width: "100%",
@@ -109,6 +188,7 @@ export default function ItemForm({
           />
         )}
       </Box>
+
       <FormControl fullWidth>
         <InputLabel>Bundle</InputLabel>
         <Select
