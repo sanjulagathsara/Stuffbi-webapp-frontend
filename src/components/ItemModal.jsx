@@ -85,6 +85,8 @@ export default function ItemModal({
                         bundleId={bundleId}
                         bundles={bundles}
                         onChange={handleFormChange}
+                        mode={mode}
+                        itemId={initialItem?.id}
                     />
                 </DialogContent>
                 <DialogActions>

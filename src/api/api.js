@@ -13,4 +13,26 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+export async function presignItemImage(itemId, contentType) {
+  const res = await api.post(`/items/${itemId}/image/presign`, { contentType });
+  return res.data; // { key, uploadUrl, url }
+}
+
+export async function presignNewItemImage(contentType) {
+  const res = await api.post(`/items/image/presign`, { contentType });
+  return res.data; // { key, uploadUrl, url }
+}
+
+export async function getItemImageViewUrl(itemId) {
+  const res = await api.get(`/items/${itemId}/image/view-url`);
+  return res.data; // { viewUrl }
+}
+
+export async function uploadToS3(uploadUrl, file) {
+  // IMPORTANT: don't use `api` here, otherwise it may attach Authorization to S3
+  await axios.put(uploadUrl, file, {
+    headers: { "Content-Type": file.type },
+  });
+}
+
 export default api;
