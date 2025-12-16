@@ -7,7 +7,8 @@ import Bundles from "./pages/Bundles";
 import Items from "./pages/Items";
 import Profile from "./pages/Profile";
 import Activity from "./pages/Activity";
-import Signup from "./pages/Signup.jsx";
+import Signup from "./pages/Signup";
+import BundleItems from "./pages/BundleItems";
 
 // ---------------------------
 // Protected Route Wrapper
@@ -54,6 +55,15 @@ export default function App() {
       />
 
       <Route
+        path="/bundles/:id/items"
+        element={
+          <PrivateRoute>
+            <BundleItems />
+          </PrivateRoute>
+        }
+      />
+
+      <Route
         path="/profile"
         element={
           <PrivateRoute>
@@ -77,6 +87,15 @@ export default function App() {
         element={
           <PrivateRoute>
             <Activity />
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/bundles/:id/items"
+        element={
+          <PrivateRoute>
+            <BundleItems />
           </PrivateRoute>
         }
       />

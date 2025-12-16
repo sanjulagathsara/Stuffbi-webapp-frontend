@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Box, Typography, Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 import api from "../api/api";
 import Sidebar from "../components/Sidebar";
@@ -8,6 +9,8 @@ import BundleCard from "../components/BundleCard";
 import BundleModal from "../components/BundleModal";
 
 export default function Bundles() {
+  const navigate = useNavigate();
+
   const [bundles, setBundles] = useState([]);
   const [openAdd, setOpenAdd] = useState(false);
 
@@ -76,6 +79,15 @@ export default function Bundles() {
       .catch(() => alert("Failed to update bundle"));
   };
 
+  // --------------------------
+  // OPEN BUNDLE ITEMS SUB SCREEN
+  // --------------------------
+  const openBundleItems = (bundle) => {
+    navigate(`/bundles/${bundle.id}/items`, {
+      state: { bundleTitle: bundle.title },
+    });
+  };
+
   return (
     <Box display="flex" minHeight="100vh" bgcolor="#F5F7FF">
       <Sidebar />
@@ -99,6 +111,7 @@ export default function Bundles() {
              <BundleCard
                 key={b.id}
                 bundle={b}
+                onOpen={() => openBundleItems(b)}
                 onEdit={() => openEditModal(b)}
                 onDelete={() => deleteBundle(b.id)}
               />
