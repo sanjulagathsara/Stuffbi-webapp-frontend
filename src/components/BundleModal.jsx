@@ -73,6 +73,8 @@ export default function BundleModal({
                         subtitle={subtitle}
                         imageUrl={imageUrl}
                         onChange={handleFormChange}
+                        mode={mode}
+                        bundleId={initialBundle?.id}
                     />
                 </DialogContent>
                 <DialogActions>

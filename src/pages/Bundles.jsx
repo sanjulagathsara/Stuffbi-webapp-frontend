@@ -4,7 +4,7 @@ import { Box, Typography, Button } from "@mui/material";
 import api from "../api/api";
 import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
-import ItemCard from "../components/ItemCard";
+import BundleCard from "../components/BundleCard";
 import BundleModal from "../components/BundleModal";
 
 export default function Bundles() {
@@ -96,14 +96,9 @@ export default function Bundles() {
 
           <Box display="flex" gap={3} mt={3} flexWrap="wrap">
             {bundles.map((b) => (
-              <ItemCard
+             <BundleCard
                 key={b.id}
-                item={{
-                  id: b.id,
-                  name: b.title,
-                  subtitle: b.subtitle,
-                  image_url: b.image_url,
-                }}
+                bundle={b}
                 onEdit={() => openEditModal(b)}
                 onDelete={() => deleteBundle(b.id)}
               />

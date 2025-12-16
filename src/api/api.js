@@ -39,5 +39,20 @@ export async function uploadToS3(uploadUrl, file, onProgress) {
   });
 }
 
+export async function presignNewBundleImage(contentType) {
+  const res = await api.post(`/bundles/image/presign`, { contentType });
+  return res.data; // { key, uploadUrl, url }
+}
+
+export async function presignBundleImage(bundleId, contentType) {
+  const res = await api.post(`/bundles/${bundleId}/image/presign`, { contentType });
+  return res.data;
+}
+
+export async function getBundleImageViewUrl(bundleId) {
+  const res = await api.get(`/bundles/${bundleId}/image/view-url`);
+  return res.data; // { viewUrl }
+}
+
 
 export default api;
