@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, Typography, Box } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { getBundleImageViewUrl } from "../api/api";
 import { getCachedSignedUrl, setCachedSignedUrl } from "../utils/signedUrlCache";
 
-const VIEW_URL_TTL_MS = 60 * 60 * 1000;
+// backend signed ttl = 2 hours → keep frontend cache slightly less
+const VIEW_URL_TTL_MS = 115 * 60 * 1000; // 1h 55m
 
-export default function BundleCard({ bundle, onEdit }) {
+export default function BundleCard({ bundle, onOpen, onEdit, onDelete }) {
   const [imgSrc, setImgSrc] = useState("");
 
   useEffect(() => {
@@ -20,7 +22,6 @@ export default function BundleCard({ bundle, onEdit }) {
 
       const cacheKey = `bundle:${bundle.id}`;
 
-      // ✅ serve from cache
       if (!force) {
         const cached = getCachedSignedUrl(cacheKey);
         if (cached) {
@@ -48,6 +49,7 @@ export default function BundleCard({ bundle, onEdit }) {
 
   return (
     <Card
+      onClick={() => onOpen?.(bundle)}
       sx={{
         width: 200,
         borderRadius: 3,
@@ -58,11 +60,35 @@ export default function BundleCard({ bundle, onEdit }) {
         "&:hover": { transform: "scale(1.03)" },
       }}
     >
+      {/* EDIT ICON */}
       {onEdit && (
         <Box
           onClick={(e) => {
             e.stopPropagation();
             onEdit(bundle);
+          }}
+          sx={{
+            position: "absolute",
+            top: 8,
+            right: onDelete ? 40 : 8,
+            background: "white",
+            borderRadius: "50%",
+            padding: "4px",
+            boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+            cursor: "pointer",
+            zIndex: 10,
+          }}
+        >
+          <EditIcon fontSize="small" />
+        </Box>
+      )}
+
+      {/* DELETE ICON */}
+      {onDelete && (
+        <Box
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete(bundle.id);
           }}
           sx={{
             position: "absolute",
@@ -76,10 +102,11 @@ export default function BundleCard({ bundle, onEdit }) {
             zIndex: 10,
           }}
         >
-          <EditIcon fontSize="small" />
+          <DeleteIcon fontSize="small" />
         </Box>
       )}
 
+      {/* IMAGE */}
       {imgSrc && (
         <Box
           component="img"
@@ -88,9 +115,8 @@ export default function BundleCard({ bundle, onEdit }) {
           loading="lazy"
           decoding="async"
           onError={() => {
-            // signed url might have expired → force refresh once
             const cacheKey = `bundle:${bundle.id}`;
-            setCachedSignedUrl(cacheKey, "", 1); // expire cached url quickly
+            setCachedSignedUrl(cacheKey, "", 1);
 
             getBundleImageViewUrl(bundle.id)
               .then(({ viewUrl }) => {
