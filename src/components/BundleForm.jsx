@@ -108,13 +108,7 @@ export default function BundleForm({
         )}
       </Box>
 
-      {/* optional: keep manual input */}
-      <TextField
-        fullWidth
-        label="Image URL (optional)"
-        value={imageUrl}
-        onChange={(e) => onChange({ field: "imageUrl", value: e.target.value })}
-      />
+    
     </Box>
   );
 }

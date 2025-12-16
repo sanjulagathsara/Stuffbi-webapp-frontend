@@ -109,16 +109,6 @@ export default function ItemForm({
           />
         )}
       </Box>
-
-      {/* optional: keep manual input if you want */}
-      <TextField
-        fullWidth
-        label="Image URL (optional)"
-        sx={{ mb: 2 }}
-        value={imageUrl}
-        onChange={(e) => onChange({ field: "imageUrl", value: e.target.value })}
-      />
-
       <FormControl fullWidth>
         <InputLabel>Bundle</InputLabel>
         <Select
