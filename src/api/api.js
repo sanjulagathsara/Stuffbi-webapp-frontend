@@ -28,11 +28,16 @@ export async function getItemImageViewUrl(itemId) {
   return res.data; // { viewUrl }
 }
 
-export async function uploadToS3(uploadUrl, file) {
-  // IMPORTANT: don't use `api` here, otherwise it may attach Authorization to S3
+export async function uploadToS3(uploadUrl, file, onProgress) {
   await axios.put(uploadUrl, file, {
     headers: { "Content-Type": file.type },
+    onUploadProgress: (evt) => {
+      if (!evt.total) return;
+      const percent = Math.round((evt.loaded / evt.total) * 100);
+      onProgress?.(percent);
+    },
   });
 }
+
 
 export default api;
