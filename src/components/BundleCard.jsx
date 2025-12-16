@@ -66,11 +66,10 @@ export default function BundleCard({ bundle, onEdit }) {
           sx={{
             width: "100%",
             height: 120,
-            objectFit: "contain",
+            objectFit: "fill",
             borderTopLeftRadius: 12,
             borderTopRightRadius: 12,
             background: "#fafafa",
-            p: 1,
           }}
         />
       )}

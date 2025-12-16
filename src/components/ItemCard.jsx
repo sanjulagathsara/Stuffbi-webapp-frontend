@@ -39,7 +39,7 @@ export default function ItemCard({ item, onEdit }) {
           component="img"
           src={imgSrc}
           alt={item.name}
-          sx={{ width: "100%", height: 120, objectFit: "contain", borderTopLeftRadius: 12, borderTopRightRadius: 12, background: "#fafafa", p: 1 }}
+          sx={{ width: "100%", height: 120, objectFit: "fill", borderTopLeftRadius: 12, borderTopRightRadius: 12, background: "#fafafa"}}
         />
       )}
 
