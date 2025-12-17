@@ -1,3 +1,6 @@
+// src/components/BundleForm.jsx
+// Form component to add/edit a bundle, including image upload
+
 import {
   Box,
   TextField,

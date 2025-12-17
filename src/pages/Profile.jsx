@@ -1,3 +1,6 @@
+// src/pages/Profile.jsx
+// Page to display and manage user profile
+
 import { useEffect, useState } from "react";
 import { Box, Typography, Card, Avatar, Divider, Button, CircularProgress, Alert, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from "@mui/material";
 import { useParams } from "react-router-dom";

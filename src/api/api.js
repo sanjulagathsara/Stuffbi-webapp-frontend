@@ -1,3 +1,7 @@
+// src/api/api.js
+// Axios instance with base URL and auth token handling
+// Functions to presign and get view URLs for item and bundle images
+
 import axios from "axios";
 
 const api = axios.create({

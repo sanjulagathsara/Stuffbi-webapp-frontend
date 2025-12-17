@@ -1,3 +1,6 @@
+// src/components/BundleModal.jsx
+// Modal component for adding/editing/deleting bundles
+
 import { useEffect, useState } from "react";
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";

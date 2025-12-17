@@ -1,3 +1,6 @@
+// src/components/PageWrapper.jsx
+// Wrapper component to provide consistent layout with Sidebar and Topbar
+
 import { Box } from "@mui/material";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";

@@ -1,3 +1,7 @@
+// src/pages/Login.jsx
+// Page to handle user login
+
+
 import { useState } from "react";
 import {
   Box,

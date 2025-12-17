@@ -1,3 +1,7 @@
+// src/components/Sidebar.jsx
+// Sidebar component for navigation between different pages
+
+
 import {
   Box,
   Typography,

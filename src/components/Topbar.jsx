@@ -1,3 +1,7 @@
+// src/components/Topbar.jsx
+// Topbar component with logout functionality
+
+
 import { Box, Typography, Button } from "@mui/material";
 import { useAuth } from "../context/AuthContext";
 
