@@ -1,3 +1,6 @@
+// src/pages/Items.jsx
+// Page to display and manage items
+
 import { useState, useEffect } from "react";
 import {
   Box,

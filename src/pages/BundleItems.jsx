@@ -1,3 +1,6 @@
+// src/pages/BundleItems.jsx
+// Page to display and manage items within a specific bundle 
+
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import {

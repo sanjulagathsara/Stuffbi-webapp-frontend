@@ -1,3 +1,6 @@
+// src/components/ItemCard.jsx
+// Card component to display item information with image and edit option
+
 import { useEffect, useState } from "react";
 import { Card, CardContent, Typography, Box, Chip } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";

@@ -1,3 +1,7 @@
+// src/pages/Bundles.jsx
+// Page to display and manage bundles
+
+
 import { useEffect, useState } from "react";
 import { Box, Typography, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";

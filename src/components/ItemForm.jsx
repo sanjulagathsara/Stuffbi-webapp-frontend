@@ -1,3 +1,7 @@
+// src/components/ItemForm.jsx
+// Form component to add/edit an item, including image upload and bundle selection
+
+
 import {
   Box,
   TextField,

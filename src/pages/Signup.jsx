@@ -1,3 +1,6 @@
+// src/pages/Signup.jsx
+// Page to handle user signup
+
 import { useState } from "react";
 import {
   Box,

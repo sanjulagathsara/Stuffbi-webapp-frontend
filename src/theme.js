@@ -1,3 +1,6 @@
+// src/theme.js
+// Custom MUI theme for StuffBi application
+
 import { createTheme } from "@mui/material/styles";
 
 const theme = createTheme({

@@ -1,3 +1,6 @@
+// src/pages/Activity.jsx
+// Page to display activity logs with pagination
+
 import { useEffect, useState } from "react";
 import {
   Box,

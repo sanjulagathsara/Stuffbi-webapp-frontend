@@ -2,7 +2,7 @@
 
 ## Overview
 
-A modern frontend application built with web technologies for the Stuffbi webapp platform.
+A modern frontend application built with web technologies for the Stuffbi webapp platform. This is a Personal Inventory Management System that can manage your personal belongings easily.
 
 ## Getting Started
 
@@ -35,14 +35,15 @@ npm run build
 src/
 ├── components/
 ├── pages/
-├── styles/
-└── utils/
+├── api/
+├── utils/
+└-- context
 ```
 
 ## Technologies
 
 - React
-- JavaScript/TypeScript
+- JavaScript
 - CSS/SCSS
 
 ## Contributing

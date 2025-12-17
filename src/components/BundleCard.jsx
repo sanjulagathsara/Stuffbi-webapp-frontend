@@ -1,3 +1,6 @@
+// src/components/BundleCard.jsx
+// Card component to display bundle information
+
 import { useEffect, useState } from "react";
 import { Card, CardContent, Typography, Box } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
